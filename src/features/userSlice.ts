@@ -21,10 +21,14 @@ export const userSlice = createSlice({
     logout: (state) => {
       state.user = { uid: "", photoUrl: "", displayName: "" };
     },
+    updateUserProfile: (state, action) => {
+      state.user.displayName = action.payload.displayName;
+      state.user.photoUrl = action.payload.photoUrl;
+    },
   },
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout, updateUserProfile } = userSlice.actions;
 
 // userSliceのreducerオブジェクトのuserのこと
 export const selectUser = (state: RootState) => state.user.user;
