@@ -17,6 +17,7 @@ import {
   Grid,
   Typography,
   makeStyles,
+  IconButton,
 } from "@material-ui/core";
 
 import SendIcon from "@material-ui/icons/Send";
@@ -101,7 +102,7 @@ const Auth: React.FC = () => {
         .map((n) => S[n % S.length])
         .join("");
       const fileName = randomChar + "_" + avatarImage.name;
-      await storage.ref("avatars/${fileName}").put(avatarImage);
+      await storage.ref(`avatars/${fileName}`).put(avatarImage);
       url = await storage.ref("avatars").child(fileName).getDownloadURL();
     }
     await authUser.user?.updateProfile({
@@ -153,6 +154,25 @@ const Auth: React.FC = () => {
                     setUserName(e.target.value);
                   }}
                 />
+                <Box textAlign="center">
+                  <IconButton>
+                    <label>
+                      <AccountCircleIcon
+                        fontSize="large"
+                        className={
+                          avatarImage
+                            ? styles.login_addIconLoaded
+                            : styles.login_addIcon
+                        }
+                      />
+                      <input
+                        className={styles.login_hiddenIcon}
+                        type="file"
+                        onChange={onChangeImageHandler}
+                      />
+                    </label>
+                  </IconButton>
+                </Box>
               </>
             )}
             <TextField
@@ -190,6 +210,11 @@ const Auth: React.FC = () => {
               label="Remember me"
             />
             <Button
+              disabled={
+                isLogin
+                  ? !email || password.length < 6
+                  : !username || !email || password.length < 6 || !avatarImage
+              }
               fullWidth
               variant="contained"
               color="primary"
