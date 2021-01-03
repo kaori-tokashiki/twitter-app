@@ -72,6 +72,16 @@ const useStyles = makeStyles((theme) => ({
 
 const Auth: React.FC = () => {
   const classes = useStyles();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLogin, setIsLogin] = useState(true);
+
+  const signInEmail = async () => {
+    await auth.signInWithEmailAndPassword(email, password);
+  };
+  const signUpEmail = async () => {
+    await auth.createUserWithEmailAndPassword(email, password);
+  };
 
   const sigInGoogle = async () => {
     await auth
@@ -90,7 +100,7 @@ const Auth: React.FC = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            {isLogin ? "Login" : "Register"}
           </Typography>
           <form className={classes.form} noValidate>
             <TextField
@@ -103,6 +113,10 @@ const Auth: React.FC = () => {
               name="email"
               autoComplete="email"
               autoFocus
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setEmail(e.target.value);
+              }}
             />
             <TextField
               variant="outlined"
@@ -114,20 +128,51 @@ const Auth: React.FC = () => {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setPassword(e.target.value);
+              }}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
             <Button
-              type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
+              startIcon={<EmailIcon />}
+              onClick={
+                isLogin
+                  ? async () => {
+                      // login mode
+                      try {
+                        await signInEmail();
+                      } catch (err) {
+                        alert(err.mesage);
+                      }
+                    }
+                  : async () => {
+                      // resister mode
+                      try {
+                        await signUpEmail();
+                        console.log("signup");
+                      } catch (err) {
+                        alert(err.message);
+                      }
+                    }
+              }
             >
-              SignIn
+              {isLogin ? "Login" : "Register"}
             </Button>
+            {/* <Grid container>
+                <Grid item xs>
+                    <span>Forgor password?</span>
+                </Grid>
+                <Grid item xs></Grid>
+            </Grid> */}
+
             <Button
               fullWidth
               variant="contained"
@@ -139,13 +184,17 @@ const Auth: React.FC = () => {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link className={styles.login_reset} href="#" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link
+                  href="#"
+                  variant="body2"
+                  onClick={() => setIsLogin(!isLogin)}
+                >
+                  {isLogin ? "Create new account ?" : "Bck to login"}
                 </Link>
               </Grid>
             </Grid>
